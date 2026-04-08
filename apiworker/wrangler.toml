@@ -1,0 +1,11 @@
+name = "mailapiv3"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+[[durable_objects.bindings]]
+name = "MAIL_STORAGE"
+class_name = "MailStorage"
+script_name = "mailserv3"
+
+[vars]
+JWT_SECRET = "REDACTED"
