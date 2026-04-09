@@ -4,12 +4,15 @@ import { createJWT, verifyJWT } from './jwt';
 interface Env {
   MAIL_STORAGE: DurableObjectNamespace;
   JWT_SECRET: string;
+  DOMAIN: string;
 }
 
 const app = new Hono<{ Bindings: Env }>();
+const getDomain = (env: Env) => env.DOMAIN || 'example.com';
 
 // GET / - API 说明页面
 app.get('/', (c) => {
+  const domain = getDomain(c.env);
   const html = `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -56,7 +59,7 @@ app.get('/', (c) => {
 }</code></pre>
     <p><strong>响应：</strong></p>
     <pre><code>{
-  "mail": "myname@razkord.top",
+  "mail": "myname@${domain}",
   "key": "eyJhbGc..."
 }</code></pre>
   </div>
@@ -67,7 +70,7 @@ app.get('/', (c) => {
     <p><strong>请求：</strong></p>
     <pre><code>{
   "key": "eyJhbGc...",
-  "mail": "myname@razkord.top"
+  "mail": "myname@${domain}"
 }</code></pre>
     <p><strong>响应（无邮件）：</strong></p>
     <pre><code>{ "status": "empty" }</code></pre>
@@ -75,7 +78,7 @@ app.get('/', (c) => {
     <pre><code>{
   "status": "received",
   "from": "sender@example.com",
-  "to": "myname@razkord.top",
+  "to": "myname@${domain}",
   "headers": { "subject": "...", ... },
   "raw": "原始邮件内容",
   "receivedAt": 1234567890
@@ -90,14 +93,14 @@ app.get('/', (c) => {
 
   <h2>使用示例</h2>
   <pre><code># 创建邮箱
-curl -X POST https://mail.razkord.top/get-mail \\
+curl -X POST https://mail.${domain}/get-mail \\
   -H "Content-Type: application/json" \\
   -d '{"mail":"test"}'
 
 # 读取邮件
-curl -X POST https://mail.razkord.top/read-mail \\
+curl -X POST https://mail.${domain}/read-mail \\
   -H "Content-Type: application/json" \\
-  -d '{"key":"YOUR_KEY","mail":"test@razkord.top"}'</code></pre>
+  -d '{"key":"YOUR_KEY","mail":"test@${domain}"}'</code></pre>
 
   <h2>注意事项</h2>
   <ul>
@@ -119,6 +122,7 @@ function generateSecureRandomId(): string {
 
 // POST /get-mail - 创建临时邮箱
 app.post('/get-mail', async (c) => {
+  const domain = getDomain(c.env);
   const body = await c.req.json().catch(() => ({}));
 
   let mailId: string;
@@ -131,7 +135,7 @@ app.post('/get-mail', async (c) => {
     mailId = generateSecureRandomId();
   }
 
-  const mail = `${mailId}@razkord.top`;
+  const mail = `${mailId}@${domain}`;
   const key = await createJWT({ mail }, c.env.JWT_SECRET);
   return c.json({ mail, key });
 });
