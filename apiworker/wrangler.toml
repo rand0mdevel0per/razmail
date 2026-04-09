@@ -9,3 +9,4 @@ script_name = "mailserv3"
 
 [vars]
 JWT_SECRET = "REDACTED"
+DOMAIN = "example.com"
