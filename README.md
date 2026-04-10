@@ -2,6 +2,7 @@
 
 > Temporaly email system based on Cloudflare email-route and worker system.
 
+Special thanks to [Linux.DO](linux.do)
 
 Prereqs:
 
@@ -37,13 +38,13 @@ Prereqs:
 
 3. Add the mail-route rule in your domain
 
-   Click `Mail` -> `Mail Routing` and add your domain in to it.
+   Click `Domain` -> `Overview` -> `<yourdomain>` -> `Mail` -> `Mail Routing` and add your domain in to it.
    
    ( It will require you to add a MX Record in your root domain which points to Cloudflare )
    
    Then add a email worker in your domain: `mailserv3`.
    
-   Edit the Catch-All rule, choose `Email Worker` and then choose `mailserv3`, save it and then enable it.
+   Navigate to the `Overview` Page and edit the Catch-All rule, choose `Email Worker` and then choose `mailserv3`, save it and then enable it.
 4. Test it
    
    Open your browser and navigate to `mail.<yourdomain>`, then follow the builtin API instructions to test it.
